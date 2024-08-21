@@ -2,7 +2,7 @@ import numpy as np
 import scipy.signal as signal
 
 
-def triangle(t, amplitude=1.0, period=1.0):
+def triangle(t, amplitude=1.0, period=1.0, shift=0.0):
     """
     Generates a triangle waveform evaluated at the specified time points. 
 
@@ -14,19 +14,21 @@ def triangle(t, amplitude=1.0, period=1.0):
         The amplitude (peak value) of the triangle waveform
     period: float
         The period of triangle waveform
-
+    shift: float
+        The phase shift of the waveform as a fraction of the period.
+    
     Returns
     ------
     x: array like
        Output array of triangle waveform values evaluated at times t.
     
     """
-    s = ((t + 0.25*period) % period)/period
+    s = ((t + 0.25*period + shift*period) % period)/period
     x = amplitude*(np.where(s > 0.5, 1.0-s, s) - 0.25)/0.25
     return x 
 
 
-def filtered_triangle(num_pt, num_cycle=1, amplitude=1.0, period=1.0, 
+def filtered_triangle(num_pt, num_cycle=1, amplitude=1.0, period=1.0, shift=0.0, 
         cutoff_frequency=1.0, rescale=True):
     """
     Generates a lowpass filtered (zero phase delay)  triangle waveform. 
@@ -68,7 +70,7 @@ def filtered_triangle(num_pt, num_cycle=1, amplitude=1.0, period=1.0,
     t_all = np.hstack((t_pre, t_mid, t_nxt))
 
     # Create Triangle waveform and filter it with forward backward filter. 
-    x_all = triangle(t_all, amplitude, period)
+    x_all = triangle(t_all, amplitude, period, shift)
     b, a  = signal.butter(1, 2*cutoff_frequency, btype='lowpass', output='ba', fs=1/dt)
     x_filt_all = signal.filtfilt(b, a, x_all)
     x_filt_mid = x_filt_all[num_pt:2*num_pt]

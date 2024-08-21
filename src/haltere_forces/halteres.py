@@ -26,7 +26,7 @@ class Halteres:
         period = 1.0/frequency
         match self.param['waveform']:
             case 'triangle':
-                angles = waveform.triangle(self.t, amplitude, period) 
+                angles = waveform.triangle(self.t, amplitude, period, shift=0.25) 
             case 'filtered_triangle':
                 num_pt = self.param['num_pt']
                 num_cycle = self.param['num_cycle']
@@ -36,6 +36,7 @@ class Halteres:
                         num_cycle=num_cycle, 
                         amplitude=amplitude, 
                         period=period,
+                        shift=0.25, 
                         cutoff_frequency=cutoff_freq,
                         )
             case _:
@@ -46,8 +47,10 @@ class Halteres:
     @property 
     def pos_left(self):
         num_pt = self.param['num_pt']
+        length = self.param['length']
+        separation = self.param['separation']
         tilt_angle = self.param['tilt_angle']
-        pos = np.array([-1.0, 0.0, 0.0])
+        pos = np.array([-1.0, 0.0, 0.0])*length
         # Rotate left haltere through flapping motion
         axis_angle = np.zeros((num_pt, 3))
         axis_angle[:,1] = -self.angle
@@ -56,13 +59,16 @@ class Halteres:
         # Rotate left haltere for tilt angle
         qrot_tilt = qn.array.from_axis_angle([0.0, 0.0, tilt_angle])
         pos = qrot_tilt.rotate(pos)
+        pos -= np.array([separation, 0.0, 0.0])
         return pos
 
     @property
     def pos_right(self):
         num_pt = self.param['num_pt']
+        length = self.param['length']
+        separation = self.param['separation']
         tilt_angle = self.param['tilt_angle']
-        pos = np.array([ 1.0, 0.0, 0.0])
+        pos = np.array([ 1.0, 0.0, 0.0])*length
         # Rotate right haltere through flapping motion
         axis_angle = np.zeros((num_pt, 3))
         axis_angle[:,1] =  self.angle
@@ -71,6 +77,7 @@ class Halteres:
         # Rotate right haltere for tilt angle
         qrot_tilt = qn.array.from_axis_angle([0.0, 0.0, -tilt_angle])
         pos = qrot_tilt.rotate(pos)
+        pos += np.array([separation, 0.0, 0.0])
         return pos
 
     @property 
@@ -141,8 +148,8 @@ class Halteres:
 
     def force(self, omega, domega=None, linacc=None):
         force = {
-                'left'  : self.force_left, 
-                'right' : self.force_right, 
+                'left'  : self.force_left(omega, domega, linacc), 
+                'right' : self.force_right(omega, domega, linacc), 
                 }
         return force
 
@@ -172,8 +179,16 @@ def calc_haltere_force(m, hpos, hvel, hacc, omega, domega=None, linacc=None):
         shape (3,), (1,3) or (N,3) array of body linear accelerations
 
     Returns:
-    force : array_like
-        shape (N,3) array of body forces
+    force : dict
+        dictionary of (N,3) force arrays
+        force = {
+            'gravity'     : gravitational force, 
+            'primary'     : force due to haltere acceleration,
+            'linear_acc'  : force due to fly's linear acceleration,
+            'angular_acc' : force due to fly's angular acceleration,
+            'centrifugal' : centrifugal force on haltere,
+            'coriolis'    : coriolis forces on haltere,
+        }
 
     """
     # Gravitational acceleration vector
@@ -184,8 +199,6 @@ def calc_haltere_force(m, hpos, hvel, hacc, omega, domega=None, linacc=None):
     check_shape(hpos, (n, 3))
     check_shape(hvel, (n, 3))
     check_shape(hacc, (n, 3))
-
-    print(hpos)
 
     # If domega or linacc aren't given assume they are zeros
     if domega is None: 
@@ -199,10 +212,25 @@ def calc_haltere_force(m, hpos, hvel, hacc, omega, domega=None, linacc=None):
     _linacc = reshape_to_nx3(n, linacc)
 
     # Compute the forces
+    force  = m*g
     force  = m*g - m*hacc - m*linacc 
     force -= m*np.cross(_domega, hpos)
     force -= m*np.cross(_omega, np.cross(_omega, hpos))
     force -= 2.0*m*np.cross(_omega, hvel)
+
+    force = {
+            'gravity'     : m*g, 
+            'primary'     : -m*hacc, 
+            'linear_acc'  : -m*linacc, 
+            'angular_acc' : -m*np.cross(_domega, hpos),
+            'centrifugal' : -m*np.cross(_omega, np.cross(_omega, hpos)),
+            'coriolis'    : 2.0*m*np.cross(_omega, hvel),
+            }
+
+    total = np.zeros_like(hpos)
+    for k, v in force.items():
+        total += v
+    force['total'] = total
     return force
 
 
