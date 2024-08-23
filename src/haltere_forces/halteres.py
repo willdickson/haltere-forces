@@ -243,13 +243,7 @@ def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_rot_axis, omega,
     _h_axis = reshape_to_nx3(n, h_axis)
     _h_rot_axis = reshape_to_nx3(n, h_rot_axis)
 
-    # Compute the forces
-    force  = m*g
-    force  = m*g - m*h_acc - m*lin_acc 
-    force -= m*np.cross(_domega, h_pos)
-    force -= m*np.cross(_omega, np.cross(_omega, h_pos))
-    force -= 2.0*m*np.cross(_omega, h_vel)
-
+    ## Compute the forces
     f_gravity  =  m*g
     f_primary  = -m*h_acc 
     f_lin_acc  = -m*lin_acc
@@ -257,6 +251,11 @@ def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_rot_axis, omega,
     f_centrif  = -m*np.cross(_omega, np.cross(_omega, h_pos))
     f_coriolis = -2.0*m*np.cross(_omega, h_vel)
     f_total = f_gravity + f_primary + f_lin_acc + f_ang_acc + f_centrif + f_coriolis 
+
+    #print(_omega[:5,:])
+    #print(h_vel[:5,:])
+    #print(f_coriolis[:5,:])
+    #print()
 
     force = {
             'total'       : f_total,
@@ -267,12 +266,9 @@ def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_rot_axis, omega,
             'centrifugal' : f_centrif, 
             'coriolis'    : f_coriolis, 
             }
-
     force_comp_names = list(force.keys())
-
     force['radial']  = {}
     force['lateral'] = {}
-    print(_h_rot_axis[0,:])
     for k in force_comp_names:
         force['radial'][k]  = project(force[k], _h_axis)
         force['lateral'][k] = project(force[k], _h_rot_axis)
