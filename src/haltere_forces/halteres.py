@@ -24,9 +24,14 @@ class Halteres:
         amplitude = self.param['amplitude']
         frequency = self.param['frequency']
         period = 1.0/frequency
+        try:
+            shift = self.param['shift']
+        except KeyError:
+            shift = 0.25
+
         match self.param['waveform']:
             case 'triangle':
-                angles = waveform.triangle(self.t, amplitude, period, shift=0.25) 
+                angles = waveform.triangle(self.t, amplitude, period, shift=shift) 
             case 'filtered_triangle':
                 num_pt = self.param['num_pt']
                 num_cycle = self.param['num_cycle']
@@ -36,7 +41,7 @@ class Halteres:
                         num_cycle=num_cycle, 
                         amplitude=amplitude, 
                         period=period,
-                        shift=0.25, 
+                        shift=shift, 
                         cutoff_frequency=cutoff_freq,
                         )
             case _:

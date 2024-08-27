@@ -2,33 +2,14 @@ import numpy as np
 import matplotlib.pyplot as plt
 from haltere_forces.halteres import Halteres
 from haltere_forces.halteres import reshape_to_nx3
+from parameters import drosophila_param
+from parameters import calliphora_param
 
+param = drosophila_param
 
-#param = {
-#        'num_pt'      : 100,    
-#        'num_cycle'   : 1, 
-#        'waveform'    : 'filtered_triangle',
-#        'cutoff_freq' : 2*130.0,             # (Hz) 
-#        'frequency'   : 130.0,               # (Hz)
-#        'amplitude'   : np.deg2rad(90.0),    # (deg)
-#        'mass'        : 5.89e-9,             # (kg) 
-#        'length'      : 0.9e-3,              # (m)
-#        'separation'  : 2.5e-3,              # (m)
-#        'tilt_angle'  : np.deg2rad(30.0),    # (rad)
-#        }
+for k,v in param.items():
+    print(k,v)
 
-param = {
-        'num_pt'      : 100,    
-        'num_cycle'   : 1, 
-        'waveform'    : 'filtered_triangle',
-        'cutoff_freq' : 2*130.0,             # (Hz) 
-        'frequency'   : 130.0,               # (Hz)
-        'amplitude'   : np.deg2rad(90.0),    # (deg)
-        'mass'        : 5.89e-9,             # (kg) 
-        'length'      : 0.9e-3,              # (m)
-        'separation'  : 2.5e-3,              # (m)
-        'tilt_angle'  : np.deg2rad(30.0),    # (rad)
-        }
 
 hsim = Halteres(param=param)
 
@@ -48,7 +29,7 @@ for omega_deg in omega_list:
 
     fig, ax = plt.subplots(3,1,sharex=True)
     omega_str = np.array2string(omega_deg, precision=2, separator=',')
-    ax[0].set_title(r'$\omega$ = ' + omega_str)
+    ax[0].set_title(r'$\omega$ = ' + omega_str + '  (deg/s)')
     ax[0].plot(t, ang, 'b')
     ax[0].set_ylabel('angle (rad)')
     ax[0].grid(True)
