@@ -227,7 +227,7 @@ def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_rot_axis, omega,
 
     """
     # Gravitational acceleration vector
-    g = m*np.array([0.0, 0.0, -sp.constants.g])
+    g = np.array([0.0, 0.0, -sp.constants.g])
 
     # Get array size and check shapes of h_pos, h_vel and h_acc
     n = h_pos.shape[0]
@@ -242,25 +242,21 @@ def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_rot_axis, omega,
         lin_acc = np.zeros_like(omega)
 
     # Reshape omega, domega, and lin_acc to (n,3) in necessary
-    _omega  = reshape_to_nx3(n, omega) 
+    _g = reshape_to_nx3(n, g)
+    _omega = reshape_to_nx3(n, omega) 
     _domega = reshape_to_nx3(n, domega)
     _lin_acc = reshape_to_nx3(n, lin_acc)
     _h_axis = reshape_to_nx3(n, h_axis)
     _h_rot_axis = reshape_to_nx3(n, h_rot_axis)
 
     ## Compute the forces
-    f_gravity  =  m*g
+    f_gravity  =  m*_g
     f_primary  = -m*h_acc 
     f_lin_acc  = -m*lin_acc
     f_ang_acc  = -m*np.cross(_domega, h_pos)
     f_centrif  = -m*np.cross(_omega, np.cross(_omega, h_pos))
     f_coriolis = -2.0*m*np.cross(_omega, h_vel)
     f_total = f_gravity + f_primary + f_lin_acc + f_ang_acc + f_centrif + f_coriolis 
-
-    #print(_omega[:5,:])
-    #print(h_vel[:5,:])
-    #print(f_coriolis[:5,:])
-    #print()
 
     force = {
             'total'       : f_total,

@@ -29,19 +29,22 @@ dx = np.gradient(x)/dt
 dy = np.gradient(y)/dt
 
 # Plot waveforms
-fig, ax = plt.subplots(2,1, sharex=True)
+fig, ax = plt.subplots(2,1, sharex=True, figsize=(8,7))
 
-line_tri, = ax[0].plot(t, x, 'g')
 line_flt, = ax[0].plot(t, y, 'b')
-ax[0].set_ylabel('x')
+ax[0].set_ylabel(r'haltere angle, $\theta$,  (deg)')
 ax[0].grid(True)
-ax[0].legend((line_tri, line_flt), ('no filter', 'filtered'), loc='upper right')
-ax[0].set_title('Unfiltered and filtered triangle waveforms')
+#ax[0].set_title('Haltere angle')
+#ax[0].set_ylim(-amplitude, amplitude)
 
-ax[1].plot(t, dx, 'g')
 ax[1].plot(t, dy, 'b')
-ax[1].set_ylabel('dx/dt')
+ax[1].set_ylabel(r' $\dot{\theta} (deg/s)$ ')
 ax[1].grid(True)
 
-ax[1].set_xlabel('t')
+ax[1].set_xlim(0, num_cycle*period)
+
+
+#ax[1].set_xlabel('t (sec)')
+fig.tight_layout()
+fig.savefig('haltere_angles.png')
 plt.show()
