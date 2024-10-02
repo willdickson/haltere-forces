@@ -27,7 +27,8 @@ class Halteres:
         try:
             shift = self.param['shift']
         except KeyError:
-            shift = 0.25
+            #shift = 0.25
+            shift = 0.0
 
         match self.param['waveform']:
             case 'triangle':
@@ -53,7 +54,7 @@ class Halteres:
         num_pt = self.param['num_pt']
         axis = np.array([-1.0, 0.0, 0.0])
         rot_axis_angle = np.zeros((num_pt, 3))
-        rot_axis_angle[:,1] = -self.angle
+        rot_axis_angle[:,1] = self.angle
         qrot_flap = qn.array.from_axis_angle(rot_axis_angle)
         axis = qrot_flap.rotate(axis)
         return axis
@@ -63,7 +64,7 @@ class Halteres:
         num_pt = self.param['num_pt']
         axis = np.array([ 1.0, 0.0, 0.0])
         rot_axis_angle = np.zeros((num_pt, 3))
-        rot_axis_angle[:,1] = self.angle
+        rot_axis_angle[:,1] = -self.angle
         qrot_flap = qn.array.from_axis_angle(rot_axis_angle)
         axis = qrot_flap.rotate(axis)
         return axis

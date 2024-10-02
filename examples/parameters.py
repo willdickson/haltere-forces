@@ -1,7 +1,7 @@
 import numpy as np
 
 calliphora_param = {
-        'num_pt'      : 100,    
+        'num_pt'      : 1000,    
         'num_cycle'   : 1, 
         'waveform'    : 'filtered_triangle',
         'cutoff_freq' : 2*130.0,             # (Hz) 
@@ -15,8 +15,8 @@ calliphora_param = {
 
 
 drosophila_param = {
-        'num_pt'      : 100,    
-        'num_cycle'   : 1, 
+        'num_pt'      : 1000,    
+        'num_cycle'   : 2, 
         'waveform'    : 'filtered_triangle',
         'cutoff_freq' : 2*200.0,             # (Hz) 
         'frequency'   : 200.0,               # (Hz)
@@ -24,7 +24,7 @@ drosophila_param = {
         'mass'        : 1.87e-9,             # (kg) 
         'length'      : 3.40e-4,             # (m)
         'separation'  : 5.68e-4,             # (m)
-        'tilt_angle'  : np.deg2rad(30.0),    # (rad)
+        'tilt_angle'  : np.deg2rad(35.0),    # (rad)
         }
 
 # Old method ... scaled from calliphora

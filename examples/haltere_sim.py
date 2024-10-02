@@ -20,7 +20,7 @@ t = hsim.t
 pos = hsim.pos_left
 ang = hsim.angle
 
-omega_mag = 320.0
+omega_mag = 300.0
 omega_list = [
         np.array([1.0,   0.0,   0.0]),
         np.array([  0.0, 1.0,   0.0]),
@@ -40,8 +40,8 @@ for omega_deg in omega_list:
     fig, ax = plt.subplots(3,1,sharex=True)
     omega_str = np.array2string(omega_deg, precision=2, separator=',')
     ax[0].set_title(r'$\omega$ = ' + omega_str + '  (deg/s)')
-    #ax[0].plot(t, ang, 'b')
-    ax[0].plot(t, pos[:,2], 'b')
+    ax[0].plot(t, ang, 'b')
+    #ax[0].plot(t, pos[:,2], 'b')
     ax[0].set_ylabel('angle (rad)')
     ax[0].grid(True)
 
