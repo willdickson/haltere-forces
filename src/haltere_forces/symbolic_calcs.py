@@ -21,7 +21,7 @@ def simple_pitch_calc():
     l_rot_mat = sympy.rot_ccw_axis3( beta)
 
     # Right haltere position, velocity and rotation axis vectors
-    r_pos = sympy.Matrix([L*sympy.cos(theta), 0, -L*sympy.sin(theta)])
+    r_pos = sympy.Matrix([L*sympy.cos(theta), 0, L*sympy.sin(theta)])
     r_pos = r_rot_mat*r_pos
     r_pos = r_pos + sympy.Matrix([b/2, 0, 0])
     r_vel = sympy.diff(r_pos, t)
@@ -29,7 +29,7 @@ def simple_pitch_calc():
     r_axs = r_rot_mat*r_axs
 
     # Left haltere position and velocity vectors
-    l_pos = sympy.Matrix([-L*sympy.cos(theta), 0, -L*sympy.sin(theta)])
+    l_pos = sympy.Matrix([-L*sympy.cos(theta), 0, L*sympy.sin(theta)])
     l_pos = l_rot_mat*l_pos
     l_pos = l_pos - sympy.Matrix([b/2, 0, 0])
     l_vel = sympy.diff(l_pos, t)
@@ -37,8 +37,8 @@ def simple_pitch_calc():
     l_axs = l_rot_mat*l_axs
 
     # Coriolis forces for right and left wings 
-    r_coriolis = 2*m*omega.cross(r_vel)
-    l_coriolis = 2*m*omega.cross(l_vel)
+    r_coriolis = -2*m*omega.cross(r_vel)
+    l_coriolis = -2*m*omega.cross(l_vel)
 
     r_coriolis_lateral = r_coriolis.dot(r_axs)
     l_coriolis_lateral = l_coriolis.dot(l_axs)

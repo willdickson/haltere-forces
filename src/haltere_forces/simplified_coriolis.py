@@ -29,7 +29,7 @@ def coriolis_from_pitch(mass, length, beta, omega_x, theta, dtheta_dt):
     num_pts = len(theta)
     f = np.zeros((num_pts, 3))
     f[:,1] = 2.0*length*mass*omega_x*dtheta_dt*np.cos(theta)
-    f[:,2] = 2.0*length*mass*omega_x*dtheta_dt*np.sin(theta)*np.sin(beta)
+    f[:,2] = -2.0*length*mass*omega_x*dtheta_dt*np.sin(theta)*np.sin(beta)
     return f
 
 

@@ -70,7 +70,7 @@ class Halteres:
         return axis
 
     @property
-    def rot_axis_left(self): 
+    def lat_proj_axis_left(self): 
         tilt_angle = self.param['tilt_angle']
         axis = np.array([0.0, 1.0, 0.0])
         qrot_tilt = qn.array.from_axis_angle([0.0, 0.0, tilt_angle])
@@ -78,7 +78,7 @@ class Halteres:
         return axis
         
     @property 
-    def rot_axis_right(self): 
+    def lat_proj_axis_right(self): 
         tilt_angle = self.param['tilt_angle']
         axis = np.array([0.0, 1.0, 0.0])
         qrot_tilt = qn.array.from_axis_angle([0.0, 0.0, -tilt_angle])
@@ -156,7 +156,7 @@ class Halteres:
                 self.vel_left,
                 self.acc_left, 
                 self.axis_left, 
-                self.rot_axis_left, 
+                self.lat_proj_axis_left, 
                 omega, 
                 domega,
                 lin_acc
@@ -170,7 +170,7 @@ class Halteres:
                 self.vel_right,
                 self.acc_right, 
                 self.axis_right,
-                self.rot_axis_right, 
+                self.lat_proj_axis_right, 
                 omega, 
                 domega,
                 lin_acc
@@ -187,7 +187,7 @@ class Halteres:
     
 # -----------------------------------------------------------------------------
 
-def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_rot_axis, omega, 
+def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_lat_axis, omega, 
         domega=None, lin_acc=None):
     """
     Computes the forces on a haltere given the mass, the position, velocity
@@ -205,8 +205,8 @@ def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_rot_axis, omega,
         shape (N,3) array of haltere acceleration vectors
     h_axis : array_like
         haltere stalk axis (3,1) array
-    h_rot_axis : array_like
-        haltere rotation axis (3,) array
+    h_lat_axis : array_like
+        haltere lateral force projection axis (3,) array
     omega : array_like
         shape (3,), (1,3) or (N,3)  array of body angular velocities
     domega : array_like
@@ -248,7 +248,7 @@ def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_rot_axis, omega,
     _domega = reshape_to_nx3(n, domega)
     _lin_acc = reshape_to_nx3(n, lin_acc)
     _h_axis = reshape_to_nx3(n, h_axis)
-    _h_rot_axis = reshape_to_nx3(n, h_rot_axis)
+    _h_lat_axis = reshape_to_nx3(n, h_lat_axis)
 
     ## Compute the forces
     f_gravity  =  m*_g
@@ -273,7 +273,7 @@ def calc_haltere_force(m, h_pos, h_vel, h_acc, h_axis, h_rot_axis, omega,
     force['lateral'] = {}
     for k in force_comp_names:
         force['radial'][k]  = project(force[k], _h_axis)
-        force['lateral'][k] = project(force[k], _h_rot_axis)
+        force['lateral'][k] = project(force[k], _h_lat_axis)
     return force
 
 
