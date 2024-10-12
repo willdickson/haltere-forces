@@ -45,15 +45,19 @@ for omega_deg in omega_list:
     ax[0].set_ylabel('angle (rad)')
     ax[0].grid(True)
 
-    ax[1].plot(t, force['left']['lateral']['coriolis'], 'b')
-    #ax[1].plot(t, force['left']['lateral']['total'], 'r')
-    ax[1].set_ylabel('force left (N)')
-    ax[1].grid(True)
     
-    ax[2].plot(t, force['right']['lateral']['coriolis'], 'b')
-    #ax[2].plot(t, force['right']['lateral']['total'], 'r')
-    ax[2].set_ylabel('force right (N)')
+    ax[1].plot(t, force['right']['lateral']['coriolis'], 'b')
+    #ax[1].plot(t, force['right']['lateral']['total'], 'r')
+    ax[1].set_ylabel('force right (N)')
+    ax[1].grid(True)
+
+    ax[2].plot(t, force['left']['lateral']['coriolis'], 'b')
+    #ax[2].plot(t, force['left']['lateral']['total'], 'r')
+    ax[2].set_ylabel('force left (N)')
     ax[2].grid(True)
+
+
+
     ax[2].set_xlabel('t (s)')
 
 plt.show()
